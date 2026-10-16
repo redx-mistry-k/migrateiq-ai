@@ -49,6 +49,35 @@ flowchart LR
 
 The API request that starts a migration only persists a queued job. A separate worker atomically claims that job, extracts and transforms the source, commits each batch with its checkpoint, and records per-row outcomes. HTTP requests never remain open for the duration of a migration.
 
+## Application screenshots
+
+These screenshots were captured from the running Docker Compose application with Playwright.
+Every value shown comes from synthetic demonstration data and completed live migration jobs.
+
+### Operations dashboard
+
+![MigrateIQ AI operations dashboard](docs/screenshots/dashboard.png)
+
+### Data source inspection
+
+![Synthetic CSV upload and source inspection](docs/screenshots/data-sources.png)
+
+### Gemini-assisted schema mapping
+
+![Gemini schema mapping suggestions](docs/screenshots/ai-schema-mapping.png)
+
+### Transformation preview
+
+![Before and after transformation preview](docs/screenshots/transformation.png)
+
+### Migration execution results
+
+![Completed 10,000-record migration results](docs/screenshots/migration-results.png)
+
+### Reconciliation report
+
+![Matched reconciliation results](docs/screenshots/reconciliation.png)
+
 ## Quick start with Docker (Windows 11)
 
 Prerequisites: Docker Desktop with the Linux container engine running.
