@@ -1,0 +1,84 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: migrateiq
+      POSTGRES_USER: migrateiq
+      POSTGRES_PASSWORD: migrateiq
+    ports:
+      - "55432:5432"
+    volumes:
+      - migrateiq_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U migrateiq -d migrateiq"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  backend:
+    build: .
+    command: sh -c "alembic upgrade head && uvicorn migrateiq.api:app --host 0.0.0.0 --port 8000"
+    environment: &app-env
+      DATABASE_URL: postgresql+psycopg://migrateiq:migrateiq@postgres:5432/migrateiq
+      DEMO_CRM_URL: http://demo-crm:8001
+      ALLOW_PRIVATE_NETWORKS: "true"
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+    ports:
+      - "8000:8000"
+    volumes:
+      - migrateiq_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health').raise_for_status()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    build: .
+    command: migrateiq-worker
+    environment: *app-env
+    volumes:
+      - migrateiq_uploads:/app/uploads
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "from migrateiq.db import engine; c=engine.connect(); c.close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build: .
+    command: streamlit run frontend/app.py --server.address 0.0.0.0 --server.port 8501
+    environment:
+      API_BASE_URL: http://backend:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8501/_stcore/health').raise_for_status()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  demo-crm:
+    build: .
+    command: uvicorn migrateiq.demo_crm:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8001/health').raise_for_status()"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  migrateiq_postgres:
+  migrateiq_uploads:

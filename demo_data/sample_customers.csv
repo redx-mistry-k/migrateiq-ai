@@ -1,0 +1,7 @@
+cust_id,cust_name,mobile_no,email_id,join_date,legacy_code,unexpected_notes
+CUST-000001,Aarav Sharma,9876543201,customer1@example.com,2024-01-05,A,synthetic record
+CUST-000002,  Meera Patel  ,9876543202,customer2@example.com,05/02/2024,B,synthetic record
+CUST-000003,Kabir Khan,not-a-phone,malformed-email,02-15-2024,C,synthetic record
+CUST-000004,Isha Nair,9876543204,,2024-03-01,,synthetic record
+CUST-000004,Isha Nair,9876543204,customer4@example.com,2024-03-01,,intentional duplicate
+,Rohan Das,9876543206,customer6@example.com,impossible-date,A,missing identifier

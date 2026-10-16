@@ -1,0 +1,67 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+secrets/
+.aws/
+.azure/
+.gcp/
+
+# Python environments and generated packages
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Runtime data and reports
+uploads/*
+!uploads/.gitkeep
+reports/*
+!reports/.gitkeep
+demo_data/*.csv
+demo_data/*.xlsx
+!demo_data/sample_customers.csv
+
+# Databases, dumps, logs, and temporary files
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+*.backup
+*.bak
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# IDE and operating-system metadata
+.idea/
+.vscode/
+.fleet/
+.DS_Store
+Thumbs.db
+Desktop.ini
